@@ -15,153 +15,157 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @Route("todo")
  */
-class TodoController extends Controller {
-	/**
-	 * Lists all todo entities.
-	 *
-	 * @Route("/", name="todo_index")
-	 * @Method("GET")
-	 */
-	public function indexAction(UserInterface $user) {
-		$repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Todo');
+class TodoController extends Controller
+{
+    /**
+     * Lists all todo entities.
+     *
+     * @Route("/", name="todo_index")
+     * @Method("GET")
+     */
+    public function indexAction(UserInterface $user)
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Todo');
 
-		return $this->render('todo/index.html.twig', array(
-			'todos' => $repository->findByUser($user->getId()),
-		));
-	}
+        return $this->render('todo/index.html.twig', [
+            'todos' => $repository->findByUser($user->getId()),
+        ]);
+    }
 
-	/**
-	 * Creates a new todo entity.
-	 *
-	 * @Route("/new", name="todo_new")
-	 * @Method({"GET", "POST"})
-	 */
-	public function newAction(Request $request, UserInterface $user) {
-		$todo = new Todo();
-		$form = $this->createForm('AppBundle\Form\TodoType', $todo)
-			->handleRequest($request);
+    /**
+     * Creates a new todo entity.
+     *
+     * @Route("/new", name="todo_new")
+     * @Method({"GET", "POST"})
+     */
+    public function newAction(Request $request, UserInterface $user)
+    {
+        $todo = new Todo();
+        $form = $this->createForm('AppBundle\Form\TodoType', $todo)
+            ->handleRequest($request);
 
-		if ($form->isSubmitted() && $form->isValid()) {
-			$todo->setUser($user);
-			$todo->setStatus(TodoStatus::PENDING);
-			$em = $this->getDoctrine()->getManager();
-			$em->persist($todo);
-			$em->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $todo->setUser($user);
+            $todo->setStatus(TodoStatus::PENDING);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($todo);
+            $em->flush();
 
-			$this->addFlash('success', 'Todo Added');
+            $this->addFlash('success', 'Todo Added');
 
-			return $this->redirectToRoute('todo_show', array('id' => $todo->getId()));
-		}
+            return $this->redirectToRoute('todo_show', ['id' => $todo->getId()]);
+        }
 
-		return $this->render('todo/new.html.twig', array(
-			'todo' => $todo,
-			'form' => $form->createView(),
-		));
-	}
+        return $this->render('todo/new.html.twig', [
+            'todo' => $todo,
+            'form' => $form->createView(),
+        ]);
+    }
 
-	/**
-	 * Finds and displays a todo entity.
-	 *
-	 * @Route("/{id}", name="todo_show")
-	 * @Method("GET")
-	 */
-	public function showAction(Todo $todo, UserInterface $user) {
+    /**
+     * Finds and displays a todo entity.
+     *
+     * @Route("/{id}", name="todo_show")
+     * @Method("GET")
+     */
+    public function showAction(Todo $todo, UserInterface $user)
+    {
+        if (!$this->AuthUserIsTodoOwner($todo, $user)) {
+            return $this->redirectToRoute('todo_index');
+        }
 
-		if (!$this->AuthUserIsTodoOwner($todo, $user)) {
-			return $this->redirectToRoute('todo_index');
-		}
+        $deleteForm = $this->createDeleteForm($todo);
 
-		$deleteForm = $this->createDeleteForm($todo);
+        return $this->render('todo/show.html.twig', [
+            'todo'        => $todo,
+            'delete_form' => $deleteForm->createView(),
+        ]);
+    }
 
-		return $this->render('todo/show.html.twig', array(
-			'todo' => $todo,
-			'delete_form' => $deleteForm->createView(),
-		));
-	}
+    /**
+     * Displays a form to edit an existing todo entity.
+     *
+     * @Route("/{id}/edit", name="todo_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function editAction(Request $request, Todo $todo, UserInterface $user)
+    {
+        if (!$this->AuthUserIsTodoOwner($todo, $user)) {
+            return $this->redirectToRoute('todo_index');
+        }
 
-	/**
-	 * Displays a form to edit an existing todo entity.
-	 *
-	 * @Route("/{id}/edit", name="todo_edit")
-	 * @Method({"GET", "POST"})
-	 */
-	public function editAction(Request $request, Todo $todo, UserInterface $user) {
+        $deleteForm = $this->createDeleteForm($todo);
 
-		if (!$this->AuthUserIsTodoOwner($todo, $user)) {
-			return $this->redirectToRoute('todo_index');
-		}
+        $editForm = $this->createForm('AppBundle\Form\TodoType', $todo)
+            ->handleRequest($request);
 
-		$deleteForm = $this->createDeleteForm($todo);
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
-		$editForm = $this->createForm('AppBundle\Form\TodoType', $todo)
-			->handleRequest($request);
+            $this->addFlash('success', 'Todo Edited');
 
-		if ($editForm->isSubmitted() && $editForm->isValid()) {
-			$this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('todo_edit', ['id' => $todo->getId()]);
+        }
 
-			$this->addFlash('success', 'Todo Edited');
+        return $this->render('todo/edit.html.twig', [
+            'todo'        => $todo,
+            'edit_form'   => $editForm->createView(),
+            'delete_form' => $deleteForm->createView(),
+        ]);
+    }
 
-			return $this->redirectToRoute('todo_edit', array('id' => $todo->getId()));
-		}
+    /**
+     * Deletes a todo entity.
+     *
+     * @Route("/{id}", name="todo_delete")
+     * @Method("DELETE")
+     */
+    public function deleteAction(Request $request, Todo $todo, UserInterface $user)
+    {
+        if (!$this->AuthUserIsTodoOwner($todo, $user)) {
+            return $this->redirectToRoute('todo_index');
+        }
 
-		return $this->render('todo/edit.html.twig', array(
-			'todo' => $todo,
-			'edit_form' => $editForm->createView(),
-			'delete_form' => $deleteForm->createView(),
-		));
-	}
+        $form = $this->createDeleteForm($todo);
+        $form->handleRequest($request);
 
-	/**
-	 * Deletes a todo entity.
-	 *
-	 * @Route("/{id}", name="todo_delete")
-	 * @Method("DELETE")
-	 */
-	public function deleteAction(Request $request, Todo $todo, UserInterface $user) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($todo);
+            $em->flush();
 
-		if (!$this->AuthUserIsTodoOwner($todo, $user)) {
-			return $this->redirectToRoute('todo_index');
-		}
+            $this->addFlash('success', 'Todo Deleted');
+        }
 
-		$form = $this->createDeleteForm($todo);
-		$form->handleRequest($request);
+        return $this->redirectToRoute('todo_index');
+    }
 
-		if ($form->isSubmitted() && $form->isValid()) {
-			$em = $this->getDoctrine()->getManager();
-			$em->remove($todo);
-			$em->flush();
+    /**
+     * Creates a form to delete a todo entity.
+     *
+     * @param Todo $todo The todo entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm(Todo $todo)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('todo_delete', ['id' => $todo->getId()]))
+            ->setMethod('DELETE')
+            ->getForm();
+    }
 
-			$this->addFlash('success', 'Todo Deleted');
-		}
+    private function AuthUserIsTodoOwner($todo, $user)
+    {
+        if ($todo->getUser()->getId() !== $user->getId()) {
+            $this->addFlash(
+                'danger',
+                'AccessForbiden - not yours todo ;)'
+            );
 
-		return $this->redirectToRoute('todo_index');
-	}
+            return false;
+        }
 
-	/**
-	 * Creates a form to delete a todo entity.
-	 *
-	 * @param Todo $todo The todo entity
-	 *
-	 * @return \Symfony\Component\Form\Form The form
-	 */
-	private function createDeleteForm(Todo $todo) {
-		return $this->createFormBuilder()
-			->setAction($this->generateUrl('todo_delete', array('id' => $todo->getId())))
-			->setMethod('DELETE')
-			->getForm()
-		;
-	}
-
-	private function AuthUserIsTodoOwner($todo, $user) {
-		if ($todo->getUser()->getId() !== $user->getId()) {
-			$this->addFlash(
-				'danger',
-				'AccessForbiden - not yours todo ;)'
-			);
-			return false;
-		}
-
-		return true;
-	}
-
+        return true;
+    }
 }
