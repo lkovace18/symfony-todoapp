@@ -5,169 +5,182 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Todo
+ * Todo.
  *
  * @ORM\Table(name="todo")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TodoRepository")
  */
-class Todo {
-	/**
-	 * @var int
-	 *
-	 * @ORM\Column(name="id", type="guid")
-	 * @ORM\Id
-	 * @ORM\GeneratedValue(strategy="UUID")
-	 */
-	private $id;
+class Todo
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="guid")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="UUID")
+     */
+    private $id;
 
-	/**
-	 * @ORM\ManyToOne(targetEntity="Category", inversedBy="todos")
-	 * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-	 */
-	private $category;
+    /**
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="todos")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    private $category;
 
-	/**
-	 * @ORM\ManyToOne(targetEntity="User", inversedBy="todos")
-	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-	 */
-	private $user;
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="todos")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(name="content", type="string", length=255)
-	 */
-	private $content;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="content", type="string", length=255)
+     */
+    private $content;
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(name="due_date", type="datetime")
-	 */
-	private $dueDate;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="due_date", type="datetime")
+     */
+    private $dueDate;
 
-	/**
-	 * @var int
-	 *
-	 * @ORM\Column(name="status", type="smallint")
-	 */
-	private $status;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="status", type="smallint")
+     */
+    private $status;
 
-	/**
-	 * Get id
-	 *
-	 * @return int
-	 */
-	public function getId() {
-		return $this->id;
-	}
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * Set status
-	 *
-	 * @param int $status
-	 *
-	 * @return Todo
-	 */
-	public function setStatus($status) {
-		$this->status = $status;
+    /**
+     * Set status.
+     *
+     * @param int $status
+     *
+     * @return Todo
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
-		return $this;
-	}
-	/**
-	 * Get status
-	 *
-	 * @return int
-	 */
-	public function getStatus() {
-		return $this->status;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set category
-	 *
-	 * @param string $category
-	 *
-	 * @return Todo
-	 */
-	public function setCategory($category) {
-		$this->category = $category;
+    /**
+     * Get status.
+     *
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
 
-		return $this;
-	}
+    /**
+     * Set category.
+     *
+     * @param string $category
+     *
+     * @return Todo
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
 
-	/**
-	 * Get category
-	 *
-	 * @return string
-	 */
-	public function getCategory() {
-		return $this->category;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set content
-	 *
-	 * @param string $content
-	 *
-	 * @return Todo
-	 */
-	public function setContent($content) {
-		$this->content = $content;
+    /**
+     * Get category.
+     *
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
 
-		return $this;
-	}
+    /**
+     * Set content.
+     *
+     * @param string $content
+     *
+     * @return Todo
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
 
-	/**
-	 * Get content
-	 *
-	 * @return string
-	 */
-	public function getContent() {
-		return $this->content;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set dueDate
-	 *
-	 * @param string $dueDate
-	 *
-	 * @return Todo
-	 */
-	public function setDueDate($dueDate) {
-		$this->dueDate = $dueDate;
+    /**
+     * Get content.
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-		return $this;
-	}
+    /**
+     * Set dueDate.
+     *
+     * @param string $dueDate
+     *
+     * @return Todo
+     */
+    public function setDueDate($dueDate)
+    {
+        $this->dueDate = $dueDate;
 
-	/**
-	 * Get dueDate
-	 *
-	 * @return string
-	 */
-	public function getDueDate() {
-		return $this->dueDate;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set user
-	 *
-	 * @param \AppBundle\Entity\User $user
-	 *
-	 * @return Todo
-	 */
-	public function setUser(\AppBundle\Entity\User $user = null) {
-		$this->user = $user;
+    /**
+     * Get dueDate.
+     *
+     * @return string
+     */
+    public function getDueDate()
+    {
+        return $this->dueDate;
+    }
 
-		return $this;
-	}
+    /**
+     * Set user.
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Todo
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
 
-	/**
-	 * Get user
-	 *
-	 * @return \AppBundle\Entity\User
-	 */
-	public function getUser() {
-		return $this->user;
-	}
+        return $this;
+    }
+
+    /**
+     * Get user.
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
 }
