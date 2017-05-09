@@ -1,0 +1,110 @@
+{% block form_row %}
+{% spaceless %}
+    <div class="field">
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endspaceless %}
+{% endblock form_row %}
+
+{%- block form_widget_simple -%}
+    {%- set type = type|default('text') -%}
+    <input class="input" type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock form_widget_simple -%}
+
+{%- block form_label -%}
+    {% if label is not same as(false) -%}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+   {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' label')|trim}) %}
+        {%- endif -%}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {%- endif -%}
+        {% if label is empty -%}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {%- endif -%}
+        <label{% if label_attr %} {% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>{{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}</label>
+    {%- endif -%}
+{%- endblock form_label -%}
+
+    
+
+{% block form_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            <article class="message is-danger">
+              <div class="message-body">
+               <ul>
+                {% for error in errors %}
+                    <li class="">{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </article>
+
+{% endif %}
+{% endspaceless %}
+{% endblock form_errors %}
+
+
+{%- block textarea_widget -%}
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+{%- endblock textarea_widget -%}
+
+
+{% block datetime_widget -%}
+    {% if widget == 'single_text' %}
+        {{- block('form_widget_simple') -}}
+    {% else -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' is-horizontal')|trim}) -%}
+        <div {{ block('widget_container_attributes') }}>
+            {{- form_errors(form.date) -}}
+            {{- form_errors(form.time) -}}
+            {{- form_widget(form.date, { datetime: true } ) -}}  @ 
+            {{- form_widget(form.time, { datetime: true } ) -}}
+        </div>
+    {%- endif %}
+{%- endblock datetime_widget %}
+
+{% block date_widget -%}
+    {% if widget == 'single_text' %}
+        {{- block('form_widget_simple') -}}
+    {% else -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' is-horizontal')|trim}) -%}
+        {% if datetime is not defined or not datetime -%}
+            <div {{ block('widget_container_attributes') -}}>
+        {%- endif %}
+            {{- date_pattern|replace({
+                '{{ year }}': form_widget(form.year),
+                '{{ month }}': form_widget(form.month),
+                '{{ day }}': form_widget(form.day),
+            })|raw -}}
+        {% if datetime is not defined or not datetime -%}
+            </div>
+        {%- endif -%}
+    {% endif %}
+{%- endblock date_widget %}
+
+{% block time_widget -%}
+    {% if widget == 'single_text' %}
+        {- block('form_widget_simple') -}
+    {% else -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' is-horizontal')|trim}) -%}
+        {% if datetime is not defined or false == datetime -%}
+            <div {{ block('widget_container_attributes') -}}>
+        {%- endif -%}
+        {{- form_widget(form.hour) }}{% if with_minutes %}:{{ form_widget(form.minute) }}{% endif %}{% if with_seconds %}:{{ form_widget(form.second) }}{% endif %}
+        {% if datetime is not defined or false == datetime -%}
+            </div>
+        {%- endif -%}
+    {% endif %}
+{%- endblock time_widget %}

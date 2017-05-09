@@ -1,0 +1,41 @@
+{% extends 'layout.html.twig' %}
+{% block subtitle %}Todo{% endblock %}
+    {% block body %}
+
+        <div class="field is-grouped">
+            <p class="control">
+                <a class="button is-light" href="{{ path('todo_index') }}">Back to the list</a>
+            </p>
+            <p class="control">
+                <a class="button is-success" href="{{ path('todo_edit', { 'id': todo.id }) }}">Edit</a>
+            </p>
+
+
+            <p class="control">
+                {{ form_start(delete_form) }}
+                <input  class="button is-danger" type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </p>
+        </div>
+
+        <table class="table is-striped">
+            <tbody>
+                <tr>
+                    <th>Id</th>
+                    <td>{{ todo.id }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ todo.category }}</td>
+                </tr>
+                <tr>
+                    <th>Content</th>
+                    <td>{{ todo.content }}</td>
+                </tr>
+                <tr>
+                    <th>Duedate</th>
+                    <td>{{ todo.dueDate|date('d-m-Y H:i') }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% endblock %}

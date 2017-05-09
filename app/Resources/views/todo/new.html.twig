@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+
+{% form_theme form 'form/fields.html.twig' %}
+
+    {% block subtitle %}edit{% endblock %}
+
+        {% block body %}
+            <a class="button is-light" href="{{ path('todo_index') }}">Back to the list</a>
+
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <input class="button is-success" type="submit" value="Create" />
+            {{ form_end(form) }}
+
+        {% endblock %}

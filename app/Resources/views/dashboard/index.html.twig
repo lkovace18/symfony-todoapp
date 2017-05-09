@@ -1,0 +1,7 @@
+{% extends 'layout.html.twig' %}
+{% block subtitle %}Welcome, {{ app.user.username }} ! {% endblock %}
+{% block body %}
+
+    {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}
+
+{% endblock %}

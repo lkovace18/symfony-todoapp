@@ -1,0 +1,13 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% form_theme form 'form/fields.html.twig' %}
+
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+    {{ form_widget(form) }}
+    <div class="field is-grouped">
+        <p class="control">
+            <input class="button is-primary" type="submit" id="_submit" name="_submit" 
+            value="Register User" />
+        </p>
+    </div>
+{{ form_end(form) }}

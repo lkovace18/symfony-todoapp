@@ -1,0 +1,26 @@
+{% extends 'layout.html.twig' %}
+
+{% form_theme edit_form 'form/fields.html.twig' %}
+
+    {% block subtitle %}Edit todo {% endblock %}
+
+        {% block body %}
+            <div class="field is-grouped">
+                <p class="control">
+                    <a class="button is-light" href="{{ path('todo_index') }}">Back to the list</a>
+                </p>
+                <p class="control">
+                    {{ form_start(delete_form) }}
+                    <input  class="button is-danger" type="submit" value="Delete">
+                    {{ form_end(delete_form) }}
+                </p>
+            </div>
+
+            {{ form_start(edit_form) }}
+            {{ form_widget(edit_form) }}
+            <input class="button is-success is-fullwidth" type="submit" value="Edit" />
+            {{ form_end(edit_form) }}
+
+
+
+        {% endblock %}
