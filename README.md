@@ -1,3 +1,7 @@
+
+[![Build Status](https://img.shields.io/travis/lkovace18/symfony-todoapp/master.svg?style=flat-square)](https://travis-ci.org/lkovace18/symfony-todoapp/)
+[![StyleCI](https://styleci.io/repos/90768289/shield)](https://styleci.io/repos/90768289)
+
 Todo Application
 ========================
 
